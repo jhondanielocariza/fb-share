@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="FB Share Tool - A web-based tool for automated Facebook post sharing with a clean, modern UI">
+    <title>FB Share Tool</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📢</text></svg>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
+
+        :root {
+            --bg-color: #1a1a2e;
+            --card-bg: #16213e;
+            --text-color: #e0e0e0;
+            --accent-color: #0f3460;
+            --accent-color-2: #e94560;
+            --error-color: #ff5c5c;
+            --success-color: #4caf50;
+            --border-color: #0f3460;
+            --input-bg: #1a1a2e;
+            --button-bg: #e94560;
+            --button-hover: #c73048;
+            --console-bg: #0a0a0a;
+            --shader-gradient: linear-gradient(45deg, #0f3460, #16213e, #e94560);
+            --tip-bg: rgba(15, 52, 96, 0.2);
+            --tutorial-bg: rgba(233, 69, 96, 0.1);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --accent-color: #3a86ff;
+            --accent-color-2: #ff6b6b;
+            --error-color: #dc2626;
+            --success-color: #16a34a;
+            --border-color: #e0e0e0;
+            --input-bg: #f5f5f5;
+            --button-bg: #3a86ff;
+            --button-hover: #2a75e0;
+            --console-bg: #fdfdfd;
+            --shader-gradient: linear-gradient(45deg, #a8c0ff, #3a86ff, #ff6b6b);
+            --tip-bg: rgba(58, 134, 255, 0.1);
+            --tutorial-bg: rgba(255, 107, 107, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: all 0.5s ease;
+            min-height: 100vh;
+            padding: 20px;
+            background-image: var(--shader-gradient);
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 20px;
+            background: rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+        }
+
+        .header h1 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 2em;
+            margin: 0;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+            font-size: 24px;
+            padding: 5px;
+            transition: transform 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: slideInUp 0.5s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-color), var(--accent-color-2));
+        }
+
+        @keyframes slideInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1, h2 {
+            margin-bottom: 20px;
+            color: var(--accent-color-2);
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+            font-weight: 700;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .step-number {
+            background: var(--accent-color-2);
+            color: white;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 1.2em;
+            box-shadow: 0 4px 12px rgba(233, 69, 96, 0.2);
+        }
+
+        .tutorial-box {
+            background: var(--tutorial-bg);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-left: 4px solid var(--accent-color-2);
+        }
+
+        .tutorial-box h3 {
+            color: var(--accent-color-2);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tutorial-box p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .tutorial-box ul {
+            list-style-type: none;
+            padding-left: 25px;
+        }
+
+        .tutorial-box li {
+            margin-bottom: 8px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .tutorial-box li::before {
+            content: '→';
+            position: absolute;
+            left: -20px;
+            color: var(--accent-color-2);
+        }
+
+        .tip-box {
+            background: var(--tip-bg);
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .tip-box i {
+            color: var(--accent-color-2);
+            font-size: 1.2em;
+            margin-top: 3px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            font-size: 0.95em;
+            color: var(--accent-color-2);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            background-color: var(--input-bg);
+            color: var(--text-color);
+            font-size: 16px;
+            transition: all 0.3s ease;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-color-2);
+            box-shadow: 0 0 0 3px rgba(233, 69, 96, 0.2);
+        }
+
+        button {
+            background-color: var(--button-bg);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button i {
+            font-size: 1.1em;
+        }
+
+        button:hover {
+            background-color: var(--button-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.7);
+            opacity: 0;
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(1);
+            transition: transform 0.5s, opacity 1s;
+        }
+        
+        button:active::after {
+            transform: translate(-50%, -50%) scale(100);
+            opacity: 1;
+            transition: transform 0s, opacity 0s;
+        }
+
+        button:disabled {
+            background-color: var(--border-color);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .stat-item {
+            background-color: var(--input-bg);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-item:hover {
+            transform: translateY(-3px);
+        }
+        
+        .stat-item h3 {
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            color: var(--accent-color-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        .stat-item p {
+            font-size: 1.8em;
+            font-weight: 700;
+        }
+
+        .console {
+            background-color: var(--console-bg);
+            border-radius: 15px;
+            padding: 20px;
+            height: 350px;
+            overflow-y: auto;
+            font-family: 'Fira Code', monospace;
+            white-space: pre-wrap;
+            margin-top: 25px;
+            border: 1px solid var(--border-color);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .console-line {
+            margin-bottom: 8px;
+            line-height: 1.5;
+            font-size: 0.9em;
+        }
+
+        .success {
+            color: var(--success-color);
+        }
+
+        .error {
+            color: var(--error-color);
+        }
+
+        .error-warning {
+            display: none;
+            background: rgba(255, 92, 92, 0.1);
+            border: 1px solid var(--error-color);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            animation: pulseError 2s infinite;
+        }
+
+        .error-warning.show {
+            display: block;
+        }
+
+        @keyframes pulseError {
+            0% { box-shadow: 0 0 0 0 rgba(255, 92, 92, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 92, 92, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 92, 92, 0); }
+        }
+
+        .error-warning-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            color: var(--error-color);
+        }
+
+        .error-warning-header i {
+            font-size: 1.5em;
+        }
+
+        .error-warning-header h3 {
+            margin: 0;
+            font-size: 1.2em;
+        }
+
+        .precautions-list {
+            list-style: none;
+            padding: 0;
+            margin: 15px 0;
+        }
+
+        .precautions-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .precautions-list li i {
+            position: absolute;
+            left: 0;
+            top: 4px;
+            color: var(--error-color);
+        }
+
+        .recommendations {
+            background: var(--tip-bg);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .recommendations h4 {
+            color: var(--accent-color-2);
+            margin: 0 0 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .step {
+            opacity: 0.5;
+            pointer-events: none;
+            filter: grayscale(0.5);
+        }
+
+        .step.active {
+            opacity: 1;
+            pointer-events: auto;
+            filter: none;
+        }
+
+        .status {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .status.success {
+            background-color: rgba(76, 175, 80, 0.1);
+            border-left: 4px solid var(--success-color);
+        }
+
+        .status.error {
+            background-color: rgba(255, 92, 92, 0.1);
+            border-left: 4px solid var(--error-color);
+        }
+
+        .custom-shares {
+            display: none;
+        }
+
+        .custom-shares.active {
+            display: block;
+        }
+
+        .progress-container {
+            margin-top: 20px;
+            background-color: var(--input-bg);
+            border-radius: 10px;
+            height: 12px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-image: linear-gradient(45deg, var(--accent-color), var(--accent-color-2));
+            width: 0%;
+            transition: width 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .monitoring-section {
+            margin-top: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .live-stats {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .live-stats-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .live-stats-header i {
+            font-size: 1.5em;
+            color: var(--accent-color-2);
+        }
+
+        .live-stats-header h3 {
+            font-size: 1.2em;
+            color: var(--accent-color-2);
+            margin: 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-item {
+            background: var(--input-bg);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-item h3 {
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            color: var(--accent-color-2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .stat-item p {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .console {
+            height: 300px;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-share-alt"></i> FB Share Tool</h1>
+            <button class="theme-toggle" id="themeToggle">🌙</button>
+        </div>
+
+        <div class="card step active" id="step1">
+            <div class="step-header">
+                <div class="step-number">1</div>
+                <h2>Get Access Token</h2>
+            </div>
+
+            <div class="tutorial-box">
+                <h3><i class="fas fa-info-circle"></i>How to Get Started</h3>
+                <p>Before you begin sharing, you'll need to get an access token. This is a secure way to connect to your Facebook account.</p>
+                <ul>
+                    <li>Make sure you're logged into your Facebook account in your browser</li>
+                    <li>Enter your Facebook credentials below</li>
+                    <li>The tool will automatically generate a secure token</li>
+                </ul>
+                <div class="tip-box">
+                    <i class="fas fa-lightbulb"></i>
+                    <div>
+                        <strong>Pro Tip:</strong> For better results, use a Facebook account that's at least 3 months old and has some activity.
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="username"><i class="fas fa-user"></i> Facebook Username/Email/ID</label>
+                <input type="text" id="username" placeholder="Enter your Facebook username or ID">
+            </div>
+            <div class="form-group">
+                <label for="password"><i class="fas fa-lock"></i> Facebook Password</label>
+                <input type="password" id="password" placeholder="Enter your Facebook password">
+            </div>
+            <button id="getTokenBtn"><i class="fas fa-key"></i> Get Token</button>
+            <div id="tokenStatus" class="status"></div>
+        </div>
+
+        <div class="card step" id="step2">
+            <div class="step-header">
+                <div class="step-number">2</div>
+                <h2>Configure Sharing</h2>
+            </div>
+
+            <div class="tutorial-box">
+                <h3><i class="fas fa-cog"></i>Sharing Configuration Guide</h3>
+                <p>Now that you have your token, let's set up how you want to share your content:</p>
+                <ul>
+                    <li>Enter the URL you want to share</li>
+                    <li>Choose how many times you want to share it</li>
+                    <li>Set the time interval between shares (minimum 1000ms recommended)</li>
+                </ul>
+                <div class="tip-box">
+                    <i class="fas fa-lightbulb"></i>
+                    <div>
+                        <strong>Pro Tip:</strong> Start with a smaller number of shares and longer intervals to test the process.
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="shareUrl"><i class="fas fa-link"></i> URL to Share</label>
+                <input type="text" id="shareUrl" placeholder="Enter the URL you want to share">
+            </div>
+            <div class="form-group">
+                <label for="shareCount"><i class="fas fa-hashtag"></i> Number of Shares</label>
+                <select id="shareCount">
+                    <option value="10">10 shares</option>
+                    <option value="50">50 shares</option>
+                    <option value="100">100 shares</option>
+                    <option value="1000">1000 shares</option>
+                    <option value="22200">Maximum (22200)</option>
+                    <option value="custom">Custom</option>
+                </select>
+            </div>
+            <div class="form-group custom-shares" id="customSharesGroup">
+                <label for="customShareCount"><i class="fas fa-edit"></i> Enter Custom Number of Shares</label>
+                <input type="number" id="customShareCount" placeholder="e.g., 500">
+            </div>
+            <div class="form-group">
+                <label for="interval"><i class="fas fa-clock"></i> Time Interval (ms)</label>
+                <input type="number" id="interval" value="1500" min="1000">
+            </div>
+            <div class="button-group" style="display: flex; gap: 10px;">
+                <button id="startSharingBtn" disabled><i class="fas fa-play"></i> Start Sharing</button>
+                <button id="stopSharingBtn" disabled><i class="fas fa-stop"></i> Stop Sharing</button>
+            </div>
+        </div>
+
+        <div class="card step" id="step3">
+            <div class="step-header">
+                <div class="step-number">3</div>
+                <h2>Sharing Process</h2>
+            </div>
+
+            <div class="tutorial-box">
+                <h3><i class="fas fa-tasks"></i>Progress Monitoring</h3>
+                <p>Watch your sharing progress in real-time:</p>
+                <ul>
+                    <li>The progress bar shows overall completion</li>
+                    <li>Console output displays detailed status updates</li>
+                    <li>Statistics are updated automatically</li>
+                </ul>
+            </div>
+
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div id="sharingStatus" class="status"></div>
+            
+            <div class="monitoring-section">
+                <div class="console" id="consoleOutput"></div>
+                
+                <div id="errorWarning" class="error-warning">
+                    <div class="error-warning-header">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3>Account Warning: High Error Rate Detected</h3>
+                    </div>
+                    <p>Your account is experiencing a high number of errors. This might indicate:</p>
+                    <ul class="precautions-list">
+                        <li><i class="fas fa-ban"></i>Account rate limiting</li>
+                        <li><i class="fas fa-lock"></i>Temporary account suspension</li>
+                        <li><i class="fas fa-user-lock"></i>Account security lock</li>
+                    </ul>
+                    <div class="recommendations">
+                        <h4><i class="fas fa-lightbulb"></i>Recommendations</h4>
+                        <ul class="precautions-list">
+                            <li><i class="fas fa-check"></i>Use a newly created Facebook account (2-3 months old)</li>
+                            <li><i class="fas fa-check"></i>Ensure the account has some activity and friends</li>
+                            <li><i class="fas fa-check"></i>Wait 24 hours before trying again</li>
+                            <li><i class="fas fa-check"></i>Use longer intervals between shares (2000ms+)</li>
+                            <li><i class="fas fa-check"></i>Start with smaller batches of shares (50-100)</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="live-stats">
+                    <div class="live-stats-header">
+                        <i class="fas fa-chart-line"></i>
+                        <h3>Live Statistics</h3>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <h3><i class="fas fa-share"></i>Total Shares</h3>
+                            <p id="total-shares">0</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3><i class="fas fa-percentage"></i>Success Rate</h3>
+                            <p id="success-rate">N/A</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3><i class="fas fa-exclamation-triangle"></i>Errors</h3>
+                            <p id="error-count">0</p>
+                        </div>
+                        <div class="stat-item">
+                            <h3><i class="fas fa-star"></i>Most Shared URL</h3>
+                            <p id="most-shared-url" style="font-size: 1em;">None</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html> 
