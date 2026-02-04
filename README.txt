@@ -1,6 +1,7 @@
 # ALLOWED USER AGENTS
-Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/1144.0.0.0 Safari/5137.36
+
 
 # REQUEST MESSAGE
 Please whitelist this device for WN Script access.
+
 
